@@ -6,7 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.io.*;
 import java.util.Date;
@@ -25,6 +25,7 @@ public class LightSensorRecord implements SensorEventListener {
     private long lastUpdate = 0;
     private int i = 0;
     private int delay;
+    private double maxRange;
 
     private ReactContext mReactContext;
     private Arguments mArguments;
@@ -37,6 +38,7 @@ public class LightSensorRecord implements SensorEventListener {
     public int start(int delay) {
         this.delay = delay;
         if ((mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)) != null) {
+            this.maxRange = mLightSensor.getMaximumRange();
             mSensorManager.registerListener(this, mLightSensor, SensorManager.SENSOR_DELAY_FASTEST);
             return (1);
         }
@@ -69,6 +71,7 @@ public class LightSensorRecord implements SensorEventListener {
             if ((curTime - lastUpdate) > delay) {
                 i = 0;
                 map.putDouble("light", sensorEvent.values[0]);
+                map.putDouble("max", this.maxRange);
                 sendEvent("LightSensor", map);
                 lastUpdate = curTime;
             }
