@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 
 import android.util.Log;
 
@@ -124,10 +125,12 @@ public class SensorManagerModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public int startLightSensor(int delay) {
+    public int startLightSensor(int delay, final Promise promise) {
       if(mLightSensorRecord == null)
         mLightSensorRecord = new LightSensorRecord(mReactContext);
-      return (mLightSensorRecord.start(delay));
+      int result = mLightSensorRecord.start(delay);
+      promise.resolve(result == 1);
+      return result;
     }
 
     @ReactMethod
